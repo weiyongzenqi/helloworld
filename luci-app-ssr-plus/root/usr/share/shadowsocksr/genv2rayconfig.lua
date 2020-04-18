@@ -4,6 +4,7 @@ local server_section = arg[1]
 local proto = arg[2]
 local local_port = arg[3] or "0"
 local socks_port = arg[4] or "0"
+local http_port = socks_port + 1
 local server = ucursor:get_all("shadowsocksr", server_section)
 local v2ray = {
 log = {
@@ -23,7 +24,7 @@ inbound = (local_port ~= "0") and {
 		destOverride = { "http", "tls" }
 	}
 } or nil,
--- 开启 socks 代理
+-- 开启 socks 代理 和 http 代理 
 inboundDetour = (proto == "tcp" and socks_port ~= "0") and {
 	{
 	protocol = "socks",
@@ -32,6 +33,10 @@ inboundDetour = (proto == "tcp" and socks_port ~= "0") and {
 			auth = "noauth",
 			udp = true
 		}
+	},
+	{
+		protocol = "http",
+		port = http_port	
 	}
 } or nil,
 -- 传出连接
